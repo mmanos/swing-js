@@ -6,7 +6,7 @@ Swing.js is a lightweight collection of javascript components to help reduce the
 * Keeping filesizes small where possible.
 * Allowing components to be loaded independently (only load what you need).
 * Allowing components to be loaded in any sequence.
-* Supporting all modern browsers as well as Internet Expolorer 8 and above.
+* Supporting all modern browsers as well as Internet Explorer 8 and above.
 
 Components
 ----------
