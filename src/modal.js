@@ -60,7 +60,7 @@ DOM example:
 			Swing.on(el, 'click', this.hide, this);
 		}, this));
 		
-		if ('swing.modal' == this.el.getAttribute('data-dismiss')) {
+		if ('swing.modal' == this.el.getAttribute('data-dismiss') && !this.options.disable_backdrop_click) {
 			Swing.on(this.el, 'click', function(e) {
 				if (e.target == e.currentTarget) this.hide();
 			}, this);
@@ -84,6 +84,8 @@ DOM example:
 			document.body.appendChild(this.backdrop);
 			this.el.style.display = 'block';
 			
+			this.trigger('shown');
+			
 			return this;
 		},
 		
@@ -96,12 +98,14 @@ DOM example:
 			this.el.style.display = 'none';
 			document.body.removeChild(this.backdrop);
 			
+			this.trigger('hidden');
+			
 			return this;
 		}
 	};
 	
-	Swing.modal = function(el, options) {
-		if ('undefined' === typeof _instances[el]) {
+	Swing.modal = function(el, options, force_new) {
+		if ('undefined' === typeof _instances[el] || force_new) {
 			_instances[el] = new modal(el, options);
 		}
 		

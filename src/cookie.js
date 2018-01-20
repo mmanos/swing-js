@@ -22,7 +22,9 @@
 					// If we can't parse the cookie, ignore it, it's unusable.
 					cookie = decodeURIComponent(cookie.replace(/\+/g, ' '));
 					result[cookie_name] = JSON.parse(cookie);
-				} catch(e) {}
+				} catch(e) {
+					result[cookie_name] = cookie;
+				}
 			}
 			
 			if (!name) {

@@ -96,15 +96,22 @@
 		},
 		
 		/**
-		 * Determine if the data passes the validation rules.
+		 * Clear any existing validation errors.
 		 */
-		check: function() {
-			// Clear existing errors.
+		clear: function() {
 			this._errors = {};
 			
 			if (this.renderer) {
 				this.renderer.clear();
 			}
+		},
+		
+		/**
+		 * Determine if the data passes the validation rules.
+		 */
+		check: function() {
+			// Clear existing errors.
+			this.clear();
 			
 			var promises = [];
 			
@@ -366,4 +373,12 @@
 	Swing.validator.extend('in', function(attribute, value, parameters) {
 		return Swing.inArray(value, parameters);
 	}, 'This field is invalid.');
+	
+	/**
+	 * Validate the value has been confirmed in another field
+	 * where the name is "{FIELD_NAME}_confirmation".
+	 */
+	Swing.validator.extend('confirmed', function(attribute, value, parameters) {
+		return value == this.getValue(attribute+'_confirmation');
+	}, 'The confirmation does not match.');
 })(window.Swing || (window.Swing = {}));

@@ -1,56 +1,79 @@
 // Requires: <none>
 
 (function(Swing) {
-	Swing.promise = function() {
-		var callbacks = [],
-			promise = {
-				resolve: resolve, reject: reject,
+	Swing.promise = function(fn_cb) {
+		var promise = {
+				resolve: resolve, reject: reject, processCallbacks: processCallbacks,
 				then: then, done: done, fail: fail, always: always,
-				state: 'pending', callbacks: callbacks
+				info: info, state: state, data: data, parent: null,
+				_info: {state: 'pending', data: undefined, callbacks: []}
 			};
 		
+		function nextCallback() {
+			if (!info().callbacks.length) return;
+			
+			var cb = info().callbacks.shift();
+			if (!cb) return;
+			if (!cb[state()]) return nextCallback();
+			
+			var resp = cb[state()].apply(cb[state()], data());
+			if (resp && resp.resolve && resp.reject && resp.then) {
+				info().state = resp.state();
+				info().callbacks = resp.info().callbacks.concat(info().callbacks);
+				info().data = resp.data();
+				resp.parent = promise;
+				processCallbacks();
+			}
+			else if ('undefined' !== typeof resp) {
+				info().data = [resp];
+				nextCallback();
+			}
+			else {
+				nextCallback();
+			}
+		}
+		
 		function complete(type) {
+			info().state = type;
+			
 			var args = Array.prototype.slice.call(arguments);
-			args = args.slice(1);
+			info().data = args.slice(1);
 			
-			promise.then = type === 'rejected'
-				? function(resolve, reject) {reject.apply(this, args); return this;}
-				: function(resolve)         {resolve.apply(this, args); return this;};
-			promise.done = type === 'rejected'
-				? function(resolve) {return this;}
-				: function(resolve) {resolve.apply(this, args); return this;};
-			promise.fail = type === 'rejected'
-				? function(reject) {reject.apply(this, args); return this;}
-				: function(reject) {return this;};
-			promise.always = function(always) {always.apply(this, args); return this;};
-			
-			promise.resolve = promise.reject = function() {throw new Error('Promise already completed');};
-			promise.state = type;
-			
-			var i = 0, cb;
-			while (cb = callbacks[i++]) {cb[type] && cb[type].apply(cb[type], args);}
-			
-			callbacks = null;
+			nextCallback();
 		}
 		
 		function resolve() {
-			complete.apply(this, ['resolved'].concat(Array.prototype.slice.call(arguments))); return this;
+			if ('pending' != state()) throw new Error('Promise already completed');
+			complete.apply(this, ['resolved'].concat(Array.prototype.slice.call(arguments))); return promise;
 		}
 		function reject() {
-			complete.apply(this, ['rejected'].concat(Array.prototype.slice.call(arguments))); return this;
+			if ('pending' != state()) throw new Error('Promise already completed');
+			complete.apply(this, ['rejected'].concat(Array.prototype.slice.call(arguments))); return promise;
 		}
 		function then(resolve, reject) {
-			callbacks.push({resolved: resolve, rejected: reject}); return this;
+			info().callbacks.push({resolved: resolve, rejected: reject}); return promise.processCallbacks();
 		}
 		function done(resolve) {
-			callbacks.push({resolved: resolve}); return this;
+			info().callbacks.push({resolved: resolve}); return promise.processCallbacks();
 		}
 		function fail(reject) {
-			callbacks.push({rejected: reject}); return this;
+			info().callbacks.push({rejected: reject}); return promise.processCallbacks();
 		}
 		function always(always) {
-			callbacks.push({resolved: always, rejected: always}); return this;
+			info().callbacks.push({resolved: always, rejected: always}); return promise.processCallbacks();
 		}
+		function info() {
+			if (promise.parent) return promise.parent.info();
+			return promise._info;
+		}
+		function state() {return info().state;}
+		function data() {return info().data;}
+		function processCallbacks() {
+			if ('pending' != state()) nextCallback();
+			return promise;
+		}
+		
+		if (fn_cb) fn_cb(resolve, reject);
 		
 		return promise;
 	};
@@ -72,11 +95,11 @@
 			
 			(function(i) {
 				args[i].done(function() {
-					if ('pending' != d.state) {return;}
+					if ('pending' != d.state()) {return;}
 					responses[i] = arguments;
 					if (++resolved == args.length) {d.resolve.apply(d, responses);}
 				}).fail(function() {
-					if ('pending' != d.state) {return;}
+					if ('pending' != d.state()) {return;}
 					responses[i] = arguments;
 					d.reject.apply(d, responses);
 				});

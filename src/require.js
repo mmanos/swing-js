@@ -34,7 +34,7 @@
 		}
 		
 		// Return if already resolved.
-		if ('pending' != definition.promise.state) {
+		if ('pending' != definition.promise.state()) {
 			return definition.promise;
 		}
 		
@@ -60,13 +60,13 @@
 			if (definition.module.resolve && definition.module.reject) {
 				definition.module.done(function(module) {
 					definition.module = module;
-					if ('pending' == definition.promise.state) {
+					if ('pending' == definition.promise.state()) {
 						definition.promise.resolve();
 					}
 				});
 			}
 			else {
-				if ('pending' == definition.promise.state) {
+				if ('pending' == definition.promise.state()) {
 					definition.promise.resolve();
 				}
 			}
@@ -96,7 +96,7 @@
 		definition.module = module;
 		
 		// Attempt to resolve this definition if things are waiting on it.
-		if ('pending' == definition.promise.state
+		if ('pending' == definition.promise.state()
 			&& definition.promise.callbacks
 			&& definition.promise.callbacks.length
 		) {

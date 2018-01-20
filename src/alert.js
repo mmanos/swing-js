@@ -16,6 +16,7 @@ Add the following CSS:
 		top: 0;
 		right: 0;
 		left: 0;
+		z-index: 1040;
 		background-color: #000;
 		width: 100%;
 		height: 100%;
@@ -46,8 +47,8 @@ DOM example:
 		if (!template) {
 			if ('undefined' !== typeof console && console.log) {
 				console.log('Swing.alert ERROR: missing required '+Swing.alert.template_selector+' DOM element.');
-				return;
 			}
+			return;
 		}
 		
 		this.promise = Swing.promise();
@@ -70,7 +71,7 @@ DOM example:
 				var str = '';
 				for (var i = 0; i < this.options.btns.length; i++) {
 					var btn = this.options.btns[i];
-					str += '&nbsp;<button class="btn ';
+					str += '<button class="btn ';
 					if (btn.action && 'resolve' == btn.action) {
 						str += (this.options.btn_resolve_class || Swing.alert.btn_resolve_class) + '" data-action="resolve"';
 					}
@@ -154,14 +155,14 @@ DOM example:
 			}
 			
 			this.hide();
-			if ('pending' == this.promise.state) this.promise.resolve(value ? value : undefined);
+			if ('pending' == this.promise.state()) this.promise.resolve(value ? value : undefined);
 			return this;
 		},
 		
 		reject: function(e) {
 			if (e) e.preventDefault();
 			this.hide();
-			if ('pending' == this.promise.state) this.promise.reject();
+			if ('pending' == this.promise.state()) this.promise.reject();
 			return this;
 		}
 	};
@@ -169,7 +170,7 @@ DOM example:
 	Swing.alert = function(msg, options) {
 		var instance = new alert(msg, Swing.extend({}, {
 			btns: [{title:'OK', action:'resolve'}]
-		}, options));;
+		}, options));
 		instance.show();
 		return instance.promise;
 	};
@@ -177,7 +178,7 @@ DOM example:
 	Swing.confirm = function(msg, options) {
 		var instance = new alert(msg, Swing.extend({}, {
 			btns: [{title:'Cancel', action:'reject'}, {title:'OK', action:'resolve'}]
-		}, options));;
+		}, options));
 		instance.show();
 		return instance.promise;
 	};

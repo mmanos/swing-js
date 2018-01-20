@@ -6,7 +6,7 @@ Swing.js is a lightweight collection of javascript components to help reduce the
 * Keeping filesizes small where possible.
 * Allowing components to be loaded independently (only load what you need).
 * Allowing components to be loaded in any sequence.
-* Supporting all modern browsers as well as Internet Explorer 8 and above.
+* Supporting all modern browsers.
 
 Components
 ----------
@@ -20,6 +20,7 @@ The current list of components:
 * **core.js** - Common helper functions used by several components.
 * **date.js** - Utility to manipulate and display dates.
 * **dom.js** - jQuery-like syntax for working with DOM elements.
+* **dropdown.js** - HTML component to render dropdown menus.
 * **events.js** - Utility to normalize and work with browser and custom events.
 * **messenger.js** - HTML component for rendering status messages in a browser.
 * **modal.js** - HTML component to render modal dialog boxes.
@@ -28,4 +29,5 @@ The current list of components:
 * **promise.js** - Utility that implements the common promise pattern.
 * **require.js** - Utility to manage component dependencies.
 * **resizer.js** - Utility to help resize DOM elements to full page height.
+* **resource.js** - Utility to work with database resources.
 * **validate.js** - Utility and HTML component to help validate form input and render error messages.

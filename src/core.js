@@ -2,14 +2,15 @@
 
 (function(Swing) {
 	Swing.each = function(obj, iterator, context) {
+		var i, length;
 		if (obj.length === +obj.length) {
-			for (var i = 0, length = obj.length; i < length; i++) {
+			for (i = 0, length = obj.length; i < length; i++) {
 				if (iterator.call(context, obj[i], i, obj) === false) return;
 			}
 		} else {
 			var keys = [];
 			for (var key in obj) keys.push(key);
-			for (var i = 0, length = keys.length; i < length; i++) {
+			for (i = 0, length = keys.length; i < length; i++) {
 				if (iterator.call(context, obj[keys[i]], keys[i], obj) === false) return;
 			}
 		}
@@ -48,6 +49,10 @@
 	
 	Swing.isNumeric = function(value) {
 		return !isNaN(parseFloat(value)) && isFinite(value);
+	};
+	
+	Swing.isArray = function(value) {
+		return Object.prototype.toString.call(value) === '[object Array]';
 	};
 	
 	Swing.inherits = function(protoProps, staticProps) {

@@ -11,6 +11,7 @@
 	
 	Swing.validateRendererBasic = function(validator) {
 		this.validator = validator;
+		this.focus_callback = Swing.bind(this._focusCallback, this);
 	};
 	
 	Swing.validateRendererBasic.prototype = {
@@ -27,6 +28,12 @@
 			var message_target = this._getMessageTarget(el);
 			if (message_target) {
 				message_target.innerHTML = error;
+				
+				var is_tooltip = new RegExp('(\\s|^)' + 'help-block-tooltip' + '(\\s|$)').test(message_target.className);
+				if (is_tooltip && el.addEventListener) {
+					el.addEventListener('focus', this.focus_callback);
+				}
+				
 				if ('none' == message_target.style.display) {
 					message_target.style.display = '';
 					message_target.setAttribute('data-was-hidden', '1');
@@ -49,6 +56,11 @@
 				var message_target = this._getMessageTarget(el);
 				if (message_target) {
 					message_target.innerHTML = '';
+					
+					var is_tooltip = new RegExp('(\\s|^)' + 'help-block-tooltip' + '(\\s|$)').test(message_target.className);
+					if (is_tooltip && el.removeEventListener) {
+						el.removeEventListener('focus', this.focus_callback);
+					}
 					
 					if ('1' == message_target.getAttribute('data-was-hidden')) {
 						message_target.style.display = 'none';
@@ -87,6 +99,15 @@
 			return el.getAttribute('data-error-class')
 				|| this.validator.input.getAttribute('data-error-class')
 				|| 'has-error';
+		},
+		
+		_focusCallback: function(event) {
+			var message_target = this._getMessageTarget(event.target);
+			
+			if ('1' == message_target.getAttribute('data-was-hidden')) {
+				message_target.style.display = 'none';
+				message_target.setAttribute('data-was-hidden', null);
+			}
 		}
 	};
 	

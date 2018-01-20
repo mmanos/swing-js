@@ -24,7 +24,9 @@
 		},
 		
 		handleResizeEvent: function(event) {
-			Swing.each(document.querySelectorAll('.swing-fullheight'), Swing.resizer.fullHeight);
+			Swing.each(document.querySelectorAll('.swing-fullheight'), function(el) {
+				Swing.resizer.fullHeight(el);
+			});
 		},
 		
 		fullHeight: function(el, padding_bottom) {
@@ -42,13 +44,13 @@
 			
 			if ('undefined' !== typeof padding_bottom) {
 				el.setAttribute('data-swing-fullheight-padding-bottom', padding_bottom);
-				offset += padding_bottom;
+				offset += Number(padding_bottom);
 			}
 			else if (el.getAttribute('data-swing-fullheight-padding-bottom')) {
-				offset += el.getAttribute('data-swing-fullheight-padding-bottom');
+				offset += Number(el.getAttribute('data-swing-fullheight-padding-bottom'));
 			}
 			
-			addClass(el, 'swing-fullheight');
+			if (!hasClass(el, 'swing-fullheight')) addClass(el, 'swing-fullheight');
 			el.style.height = (window.innerHeight - offset) + 'px';
 		},
 		

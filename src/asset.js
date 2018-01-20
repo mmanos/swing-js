@@ -34,12 +34,12 @@
 				return;
 			}
 			
-			if ('pending' == d.state) {
+			if ('pending' == d.state()) {
 				setTimeout(d.resolve, 0);
 			}
 		};
 		el.onload = function() {
-			if ('pending' == d.state) {
+			if ('pending' == d.state()) {
 				setTimeout(d.resolve, 0);
 			}
 		};
