@@ -201,10 +201,10 @@
 		
 		endOf: function(unit) {
 			unit = normalizeUnits(unit);
-			if ('day' == unit) unit = 'date';
+			var set_unit = 'day' == unit ? 'date' : unit;
 			
 			return this.startOf(unit)
-				.set(unit, this.get(unit) + 1)
+				.set(set_unit, this.get(set_unit) + 1)
 				.subtract(1, 'millisecond');
 		},
 		
