@@ -1,4 +1,4 @@
-// Requires: core.js
+import './core';
 
 (function(Swing) {
 	var _id = 0;
@@ -21,7 +21,7 @@
 					if (el.addEventListener || el.attachEvent) {
 						var e = arguments[0];
 						e.preventDefault = e.preventDefault || function() {e.returnValue = false;};
-						e.currentTarget = e.currentTarget || el;
+						if (!e.currentTarget) e.currentTarget = el;
 					}
 					
 					context = 'undefined' === typeof context ? this : context;
@@ -115,3 +115,8 @@
 		}
 	}
 })(window.Swing || (window.Swing = {}));
+
+export const on = window.Swing.on;
+export const off = window.Swing.off;
+export const trigger = window.Swing.trigger;
+export const observable = window.Swing.observable;

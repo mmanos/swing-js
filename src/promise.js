@@ -109,3 +109,6 @@
 		return d;
 	};
 })(window.Swing || (window.Swing = {}));
+
+export const promise = window.Swing.promise;
+export const when = window.Swing.when;

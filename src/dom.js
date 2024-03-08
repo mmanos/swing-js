@@ -1,4 +1,5 @@
-// Requires: core.js, events.js
+import './core';
+import './events';
 
 (function(Swing) {
 	var _i = 0;
@@ -381,3 +382,5 @@
 		}
 	};
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.dom;

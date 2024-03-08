@@ -1,4 +1,7 @@
-// Requires: core.js, ajax.js, events.js, model.js
+import './core';
+import './ajax';
+import './events';
+import './model';
 
 (function(Swing) {
 	var id_counter = 0;
@@ -175,3 +178,5 @@
 	
 	if (Swing.model) Swing.collection.prototype.model = Swing.model;
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.collection;

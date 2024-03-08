@@ -1,4 +1,5 @@
-// Requires: core.js, promise.js
+import './core';
+import './promise';
 
 (function(Swing) {
 	/**
@@ -381,4 +382,20 @@
 	Swing.validator.extend('confirmed', function(attribute, value, parameters) {
 		return value == this.getValue(attribute+'_confirmation');
 	}, 'The confirmation does not match.');
+	
+	/**
+	 * Validate the string is in URL format.
+	 */
+	Swing.validator.extend('url', function(attribute, value, parameters) {
+		var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+			'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+			'((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+			'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+			'(\\?[,;&a-z\\d%_.~+=-]*)?'+ // query string
+			'(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+		return value.match(pattern);
+	}, 'This field must be a valid URL format.');
 })(window.Swing || (window.Swing = {}));
+
+export const validator = window.Swing.validator;
+export const validate = window.Swing.validate;

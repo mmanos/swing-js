@@ -1,4 +1,4 @@
-// Requires: core.js
+import './core';
 
 (function(Swing) {
 	var hasClass = function(el, value) {
@@ -67,3 +67,5 @@
 		}
 	};
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.resizer;

@@ -1,4 +1,5 @@
-// Requires: core.js, validate.js
+import './core';
+import './validate';
 
 (function(Swing) {
 	var getElement = function(el, selector) {
@@ -82,7 +83,7 @@
 		_getMessageTarget: function(el) {
 			var selector = el.getAttribute('data-error-message-target')
 				|| this.validator.input.getAttribute('data-error-message-target')
-				|| 'parent:.help-block';
+				|| 'parent:.invalid-feedback';
 			
 			return getElement(el, selector);
 		},
@@ -90,7 +91,7 @@
 		_getClassTarget: function(el) {
 			var selector = el.getAttribute('data-error-class-target')
 				|| this.validator.input.getAttribute('data-error-class-target')
-				|| 'parent:';
+				|| '';
 			
 			return getElement(el, selector);
 		},
@@ -98,7 +99,7 @@
 		_getErrorClass: function(el) {
 			return el.getAttribute('data-error-class')
 				|| this.validator.input.getAttribute('data-error-class')
-				|| 'has-error';
+				|| 'is-invalid';
 		},
 		
 		_focusCallback: function(event) {
@@ -114,3 +115,5 @@
 	if (Swing.validator) Swing.validator.default_renderer = Swing.validateRendererBasic;
 	else Swing.defaultValidationRenderer = Swing.validateRendererBasic;
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.validateRendererBasic;

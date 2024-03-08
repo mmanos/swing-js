@@ -68,3 +68,5 @@
 		}
 	};
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.cookie;

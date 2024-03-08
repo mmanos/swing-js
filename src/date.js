@@ -1,4 +1,4 @@
-// Requires: core.js
+import './core';
 
 (function(Swing) {
 	var i18n = {
@@ -253,7 +253,7 @@
 			return true;
 		},
 		
-		from: function(date, verbose, postfix) {
+		from: function(date, verbose, postfix, prefix) {
 			var val,
 				str,
 				seconds = _date(date).unix() - this.unix();
@@ -270,12 +270,13 @@
 			str += (verbose && val != 1) ? 's' : '';
 			
 			var postfix_str = postfix ? ' ' + postfix : '';
+			var prefix_str = prefix ? prefix + ' ' : '';
 			
-			return val + str + postfix_str;
+			return prefix_str + val + str + postfix_str;
 		},
 		
-		fromNow: function(verbose, postfix) {
-			return this.from(new Date(), verbose, postfix);
+		fromNow: function(verbose, postfix, prefix) {
+			return this.from(new Date(), verbose, postfix, prefix);
 		},
 		
 		// Set the date for the specified day of the current month.
@@ -422,3 +423,5 @@
 	
 	Swing.date.normalizeUnits = normalizeUnits;
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.date;

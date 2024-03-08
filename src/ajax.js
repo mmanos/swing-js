@@ -1,4 +1,4 @@
-// Requires: promise.js
+import './promise';
 
 (function(Swing) {
 	Swing.ajax = function(options) {
@@ -80,6 +80,10 @@
 					}
 				}
 			}
+			else if (options.json) {
+				options.headers['Content-type'] = 'application/json';
+				data = JSON.stringify(options.json);
+			}
 			else if (options.data) {
 				options.headers['Content-type'] = 'application/x-www-form-urlencoded';
 				data = serialize(options.data);
@@ -101,7 +105,7 @@
 		
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState != 4) return;
-			if (xhr.status == 200) {
+			if (xhr.status == 200 || xhr.status == 201) {
 				var ctype = xhr.getResponseHeader('Content-Type');
 				if (ctype && ctype.indexOf('application/json') !== -1) d.resolve(JSON.parse(xhr.responseText), xhr);
 				else d.resolve(xhr.responseText, xhr);
@@ -125,3 +129,5 @@
 	Swing.ajax.precheck = function(options) {};
 	Swing.ajax.postcheck = function(options, d) {};
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.ajax;

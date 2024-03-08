@@ -1,4 +1,5 @@
-// Requires: core.js, events.js
+import './core';
+import './events';
 
 (function(Swing) {
 	var hasClass = function(el, value) {
@@ -196,9 +197,9 @@
 			
 			if (start > 1) {
 				var li_1 = document.createElement('li');
-				addClass(li_1, 'page page-1');
+				addClass(li_1, 'page-item page page-1');
 				li_1.setAttribute('data-page', 1);
-				li_1.innerHTML = '<a href="#">1</a>';
+				li_1.innerHTML = '<a href="#" class="page-link">1</a>';
 				var pg_prev = this.el.querySelector('.pg-prev');
 				pg_prev.parentNode.insertBefore(li_1, pg_prev.nextSibling);
 				
@@ -221,9 +222,9 @@
 				}
 				
 				var li_cur = document.createElement('li');
-				addClass(li_cur, 'page page-'+i);
+				addClass(li_cur, 'page-item page page-'+i);
 				li_cur.setAttribute('data-page', i);
-				li_cur.innerHTML = '<a href="#">'+i+'</a>';
+				li_cur.innerHTML = '<a href="#" class="page-link">'+i+'</a>';
 				last.parentNode.insertBefore(li_cur, last.nextSibling);
 			}
 			
@@ -238,9 +239,9 @@
 				}
 				
 				var li_last = document.createElement('li');
-				addClass(li_last, 'page page-'+this.pages);
+				addClass(li_last, 'page-item page page-'+this.pages);
 				li_last.setAttribute('data-page', this.pages);
-				li_last.innerHTML = '<a href="#">'+this.pages+'</a>';
+				li_last.innerHTML = '<a href="#" class="page-link">'+this.pages+'</a>';
 				pg_next.parentNode.insertBefore(li_last, pg_next);
 			}
 			
@@ -302,7 +303,7 @@
 				this.el.setAttribute('id', this.options.id);
 			}
 			
-			this.el.innerHTML = '<li class="pg-prev"><a href="#">&laquo;</a></li><li class="pg-next"><a href="#">&raquo;</a></li>';
+			this.el.innerHTML = '<li class="page-item pg-prev"><a href="#" class="page-link">&laquo;</a></li><li class="page-item pg-next"><a href="#" class="page-link">&raquo;</a></li>';
 			
 			Swing.on(this.el, 'click', function(e) {
 				if (!e.target || 'A' != e.target.tagName) {
@@ -398,3 +399,5 @@
 		}
 	};
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.paginate;

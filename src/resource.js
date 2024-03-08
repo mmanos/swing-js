@@ -1,4 +1,5 @@
-// Requires: core.js, ajax.js
+import './core';
+import './ajax';
 
 (function(Swing) {
 	var id_counter = 0;
@@ -67,10 +68,12 @@
 		$save: function(options) {
 			options || (options = {});
 			
+			var data = this.id ? this.$changed() : this.$toJSON();
+			
 			return Swing.ajax(Swing.extend({}, {
 				url: ('string' === typeof this.$url) ? this.$url : this.$url(),
 				type: this.id ? 'PUT' : 'POST',
-				data: Swing.extend({}, this.$toJSON(), options.extra_data ? options.extra_data : {})
+				data: Swing.extend({}, data, options.extra_data ? options.extra_data : {})
 			}, options))
 				.done(Swing.bind(function(resp, xhr) {
 					this.$set(resp);
@@ -103,7 +106,12 @@
 		},
 		
 		$load: function(data) {
-			this.$set(data);
+			if (data instanceof Swing.resource) {
+				this.$set(data.$toJSON());
+			}
+			else {
+				this.$set(data);
+			}
 			Object.defineProperty(this, '$prev', {value:JSON.parse(JSON.stringify(this.$toJSON())),configurable:true});
 		},
 		
@@ -121,6 +129,23 @@
 		
 		$hasChanged: function() {
 			return JSON.stringify(this.$prev) != JSON.stringify(this.$toJSON());
+		},
+		
+		$changed: function() {
+			var data = this.$toJSON();
+			var changed = {};
+			for (var key in data) {
+				if (JSON.stringify(data[key]) !== JSON.stringify(this.$prev[key])) {
+					changed[key] = data[key];
+				}
+			}
+			return changed;
+		},
+		
+		$clone: function() {
+			var copy = new this.constructor;
+			copy.$load(this);
+			return copy;
 		}
 	};
 	
@@ -146,6 +171,7 @@
 	};
 	
 	Swing.resource.find = function(id, options) {
+		if (!id) return Swing.promise().reject();
 		var self = this;
 		var instance = new self({id:id});
 		return instance.$fetch(options);
@@ -173,7 +199,7 @@
 				options2.data = Swing.extend({}, options.data, options2.data, {page:page2 || models.page});
 				if (num2) options2.data.per_page = num2;
 				
-				if (options2.append) {
+				if (options2.append || options2.prepend) {
 					var model_ids = [];
 					for (var i = 0; i < models.length; i++) {
 						if (models[i].id) model_ids.push(models[i].id);
@@ -181,7 +207,7 @@
 				}
 				
 				return self.query(options2).done(function(models2, resp2, xhr2, options2) {
-					if (!options2.append) {
+					if (!options2.append && !options2.prepend) {
 						while (models.length > 0) {
 							models.pop();
 						}
@@ -189,11 +215,21 @@
 					for (var i = 0; i < models2.length; i++) {
 						if ('undefined' !== typeof model_ids && models2[i].id) {
 							if (model_ids.indexOf(models2[i].id) === -1) {
-								models.push(models2[i]);
+								if (options2.prepend) {
+									models.unshift(models2[i]);
+								}
+								else {
+									models.push(models2[i]);
+								}
 							}
 						}
 						else {
-							models.push(models2[i]);
+							if (options2.prepend) {
+								models.unshift(models2[i]);
+							}
+							else {
+								models.push(models2[i]);
+							}
 						}
 					}
 					
@@ -248,3 +284,5 @@
 	if (Swing.inherits) Swing.resource.extend = Swing.inherits;
 	else (Swing.queueInherits || (Swing.queueInherits = [])) && Swing.queueInherits.push(Swing.resource);
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.resource;

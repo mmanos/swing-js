@@ -1,4 +1,6 @@
-// Requires: core.js, promise.js, events.js
+import './core';
+import './promise';
+import './events';
 
 /*
 USAGE
@@ -177,7 +179,7 @@ DOM example:
 	
 	Swing.confirm = function(msg, options) {
 		var instance = new alert(msg, Swing.extend({}, {
-			btns: [{title:'Cancel', action:'reject'}, {title:'OK', action:'resolve'}]
+			btns: [{title:'OK', action:'resolve'}, {title:'Cancel', action:'reject'}]
 		}, options));
 		instance.show();
 		return instance.promise;
@@ -185,5 +187,8 @@ DOM example:
 	
 	Swing.alert.template_selector = '.sw-alert-template';
 	Swing.alert.btn_resolve_class = 'btn-primary';
-	Swing.alert.btn_reject_class = 'btn-default';
+	Swing.alert.btn_reject_class = 'btn-outline-secondary';
 })(window.Swing || (window.Swing = {}));
+
+export const alert = window.Swing.alert;
+export const confirm = window.Swing.confirm;

@@ -1,4 +1,4 @@
-// Requires: promise.js
+import './promise';
 
 (function(Swing) {
 	var _assets = {};
@@ -51,3 +51,5 @@
 		return d;
 	};
 })(window.Swing || (window.Swing = {}));
+
+export default window.Swing.asset;
