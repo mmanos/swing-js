@@ -11,7 +11,7 @@ import './core';
 			'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 		]
 	};
-	
+
 	var masks = {
 		'default':      'mmm dd, yyyy h:MMtt',
 		original:       'ddd mmm dd yyyy HH:MM:ss',
@@ -27,7 +27,7 @@ import './core';
 		isoDateTime:    'yyyy-mm-dd HH:MM:ss',
 		isoUtcDateTime: 'yyyy-mm-dd"T"HH:MM:ss"Z"'
 	};
-	
+
 	var	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
 		timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
 		timezoneClip = /[^-+\dA-Z]/g,
@@ -43,7 +43,7 @@ import './core';
 		},
 		normalizeUnits = function(unit) {
 			if (!unit) return unit;
-			
+
 			if (1 === unit.length) {
 				switch (unit) {
 					case 'y': case 'Y': return 'year';
@@ -56,24 +56,24 @@ import './core';
 					default: return unit;
 				}
 			}
-			
+
 			unit = unit.toLowerCase();
 			if ('s' === unit.charAt(unit.length - 1)) {
 				unit = unit.substr(0, unit.length - 1);
 			}
-			
+
 			return unit;
 		};
-	
+
 	var _date = Swing.date = function(date, utc) {
 		if (!(this instanceof _date)) return new _date(date, utc);
-		
+
 		if (date && date % 1 === 0) this._d = date < 2147483640 ? new Date(date*1000) : new Date(date);
 		else if (date && 'string' === typeof date) this._d = new Date(date);
 		else if (date instanceof Date) this._d = date;
 		else if (date instanceof _date) this._d = new Date(date.valueOf(), date.utc);
 		else this._d = new Date();
-		
+
 		this.utc = utc ? true : false;
 	};
 	_date.prototype = {
@@ -91,7 +91,7 @@ import './core';
 				default: return null;
 			}
 		},
-		
+
 		set: function(unit, val) {
 			switch (normalizeUnits(unit)) {
 				case 'millisecond' : return this.millisecond(val);
@@ -106,44 +106,44 @@ import './core';
 				default: return this;
 			}
 		},
-		
+
 		millisecond: function(val) {
 			if ('undefined' === typeof val) return this.utc ? this._d.getUTCMilliseconds() : this._d.getMilliseconds();
 			this.utc ? this._d.setUTCMilliseconds(val) : this._d.setMilliseconds(val); return this;
 		},
 		milliseconds: function() {return this.millisecond.apply(this, arguments);},
-		
+
 		second: function(val) {
 			if ('undefined' === typeof val) return this.utc ? this._d.getUTCSeconds() : this._d.getSeconds();
 			this.utc ? this._d.setUTCSeconds(val) : this._d.setSeconds(val); return this;
 		},
 		seconds: function() {return this.second.apply(this, arguments);},
-		
+
 		minute: function(val) {
 			if ('undefined' === typeof val) return this.utc ? this._d.getUTCMinutes() : this._d.getMinutes();
 			this.utc ? this._d.setUTCMinutes(val) : this._d.setMinutes(val); return this;
 		},
 		minutes: function() {return this.minute.apply(this, arguments);},
-		
+
 		hour: function(val) {
 			if ('undefined' === typeof val) return this.utc ? this._d.getUTCHours() : this._d.getHours();
 			this.utc ? this._d.setUTCHours(val) : this._d.setHours(val); return this;
 		},
 		hours: function() {return this.hour.apply(this, arguments);},
-		
+
 		date: function(val) {
 			if ('undefined' === typeof val) return this.utc ? this._d.getUTCDate() : this._d.getDate();
 			this.utc ? this._d.setUTCDate(val) : this._d.setDate(val); return this;
 		},
 		dates: function() {return this.date.apply(this, arguments);},
-		
+
 		day: function(val) {
 			var day = this.utc ? this._d.getUTCDay() : this._d.getDay();
 			if ('undefined' === typeof val) return day;
 			return this.date(this.date() + val - day);
 		},
 		days: function() {return this.day.apply(this, arguments);},
-		
+
 		week: function(val) {
 			var start_of_year = this.clone().startOf('year');
 			var week = Math.ceil((((this._d - start_of_year._d) / 86400000) + start_of_year.day())/7);
@@ -151,36 +151,36 @@ import './core';
 			return this.date(this.date() + ((val - week) * 7));
 		},
 		weeks: function() {return this.week.apply(this, arguments);},
-		
+
 		month: function(val) {
 			if ('undefined' === typeof val) return this.utc ? this._d.getUTCMonth() : this._d.getMonth();
 			this.utc ? this._d.setUTCMonth(val) : this._d.setMonth(val); return this;
 		},
 		months: function() {return this.month.apply(this, arguments);},
-		
+
 		year: function(val) {
 			if ('undefined' === typeof val) return this.utc ? this._d.getUTCFullYear() : this._d.getFullYear();
 			this.utc ? this._d.setUTCFullYear(val) : this._d.setFullYear(val); return this;
 		},
 		years: function() {return this.year.apply(this, arguments);},
-		
+
 		add: function(amount, unit) {
 			unit = normalizeUnits(unit);
 			if ('day' == unit) unit = 'date';
 			return this.set(unit, this.get(unit) + amount);
 		},
-		
+
 		subtract: function(amount, unit) {
 			return this.add(amount * -1, unit);
 		},
-		
+
 		startOf: function(unit) {
 			unit = normalizeUnits(unit);
-			
+
 			var units = ['month', 'day', 'week', 'hour', 'minute', 'second', 'millisecond'];
-			
+
 			if ('week' == unit) this.date(this.date() - this.day());
-			
+
 			var found = (unit == 'year');
 			for (var i = 0; i < units.length; i++) {
 				if (found) {
@@ -195,22 +195,22 @@ import './core';
 				}
 				else if (units[i] == unit) found = true;
 			}
-			
+
 			return this;
 		},
-		
+
 		endOf: function(unit) {
 			unit = normalizeUnits(unit);
 			var set_unit = 'day' == unit ? 'date' : unit;
-			
+
 			return this.startOf(unit)
 				.set(set_unit, this.get(set_unit) + 1)
 				.subtract(1, 'millisecond');
 		},
-		
+
 		diff: function(from, unit, precise) {
 			var diff = this.valueOf() - _date(from).valueOf();
-			
+
 			switch (normalizeUnits(unit)) {
 				case 'year': diff = diff / 1000 / 60 / 60 / 24 / 365; break;
 				case 'month': diff = diff / 1000 / 60 / 60 / 24 / 30; break;
@@ -221,19 +221,19 @@ import './core';
 				case 'second': diff = diff / 1000; break;
 				default: diff = diff;
 			}
-			
+
 			if (precise) return round(diff, 1);
 			return Math.floor(diff);
 		},
-		
+
 		isSame: function(d, unit) {
 			d = _date(d);
 			unit = normalizeUnits(unit);
-			
+
 			var units = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
-			
+
 			if ('week' == unit) return this.year() == d.year() && this.week() == d.week();
-			
+
 			var match;
 			for (var i = 0; i < units.length; i++) {
 				switch (units[i]) {
@@ -245,44 +245,44 @@ import './core';
 					case 'second': match = (this.second() == d.second()); break;
 					case 'millisecond': match = (this.millisecond() == d.millisecond()); break;
 				}
-				
+
 				if (!match) return false;
 				if (units[i] == unit) return true;
 			}
-			
+
 			return true;
 		},
 
 		between: function(start, end) {
 			return this.unix() >= _date(start).unix() && this.unix() <= _date(end).unix();
 		},
-		
+
 		from: function(date, verbose, postfix, prefix) {
 			var val,
 				str,
 				seconds = _date(date).unix() - this.unix();
-			
+
 			if (seconds <= 45) return verbose ? 'just now' : 'now';
-			
+
 			if (seconds > 29808000) {val = Math.round(seconds / 31536000); str = verbose ? ' year' : 'y';}
 			else if (seconds > 2160000) {val = Math.round(seconds / 2592000); str = verbose ? ' month' : 'mo';}
 			else if (seconds > 79200) {val = Math.round(seconds / 86400); str = verbose ? ' day' : 'd';}
 			else if (seconds > 2700) {val = Math.round(seconds / 3600); str = verbose ? ' hour' : 'h';}
 			else if (seconds > 45) {val = Math.round(seconds / 60); str = verbose ? ' minute' : 'm';}
 			else {val = seconds; str = verbose ? ' second' : 's';}
-			
+
 			str += (verbose && val != 1) ? 's' : '';
-			
+
 			var postfix_str = postfix ? ' ' + postfix : '';
 			var prefix_str = prefix ? prefix + ' ' : '';
-			
+
 			return prefix_str + val + str + postfix_str;
 		},
-		
+
 		fromNow: function(verbose, postfix, prefix) {
 			return this.from(new Date(), verbose, postfix, prefix);
 		},
-		
+
 		// Set the date for the specified day of the current month.
 		// E.g. dayOfMonth(5, 'day') -> 5th day of the month
 		// E.g. dayOfMonth(1, 3) -> 1st Wednesday of the month
@@ -297,10 +297,10 @@ import './core';
 				else if ('day' == day) {
 					matching_days.push(start.date());
 				}
-				
+
 				start.add(1, 'day');
 			}
-			
+
 			var found_date = null;
 			if (Swing.isNumeric(which)) {
 				if ('undefined' !== typeof matching_days[which-1]) {
@@ -312,61 +312,61 @@ import './core';
 					found_date = matching_days[matching_days.length-1];
 				}
 			}
-			
+
 			if (found_date) {
 				this.date(found_date);
 			}
 			else {
 				this._d = new Date('invalid');
 			}
-			
+
 			return this;
 		},
-		
+
 		valueOf: function() {
 			return this._d.getTime();
 		},
-		
+
 		unix: function() {
 			return Math.floor(this._d.getTime() / 1000);
 		},
-		
+
 		toISOString : function() {
 			return this._d.toISOString();
 		},
-		
+
 		toString : function() {
 			return this._d.toString();
 		},
-		
+
 		toJSON : function() {
 			return this.toISOString();
 		},
-		
+
 		toDate : function() {
 			return new Date(this.valueOf());
 		},
-		
+
 		isDST: function() {
 			var jan = new Date(this.year(), 0, 1);
 			var jul = new Date(this.year(), 6, 1);
 			var stdTimezoneOffset = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
 			return this._d.getTimezoneOffset() < stdTimezoneOffset;
 		},
-		
+
 		isValid: function() {
 			return !isNaN(this._d.getTime());
 		},
-		
+
 		clone: function() {
 			return new _date(this.valueOf(), this.utc);
 		},
-		
+
 		format: function(mask) {
 			if (!this.isValid()) return 'Invalid date';
-			
+
 			mask = String(masks[mask] || mask || masks['default']);
-			
+
 			var	_ = this.utc ? 'getUTC' : 'get',
 				d = this._d[_ + 'Date'](),
 				D = this._d[_ + 'Day'](),
@@ -406,25 +406,25 @@ import './core';
 					o:    (o > 0 ? '-' : '+') + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
 					S:    ['th', 'st', 'nd', 'rd'][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10]
 				};
-			
+
 			return mask.replace(token, function ($0) {
 				return $0 in flags ? flags[$0] : $0.slice(1, $0.length - 1);
 			});
 		}
 	};
-	
+
 	Swing.date.utc = function(d) {
 		return new _date(d, true);
 	};
-	
+
 	Swing.date.isInstance = function(d) {
 		return d instanceof _date;
 	};
-	
+
 	Swing.date.isDate = function(d) {
 		return d instanceof Date;
 	};
-	
+
 	Swing.date.normalizeUnits = normalizeUnits;
 })(window.Swing || (window.Swing = {}));
 

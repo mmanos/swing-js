@@ -1,8 +1,8 @@
 {
   "name": "@mmanos/swing-js",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A lightweight collection of javascript components to help reduce the need for bloated 3rd-party libraries.",
-  "main": "src/core.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mmanos/swing-js.git"
