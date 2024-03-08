@@ -57,7 +57,10 @@ import './promise';
 			}
 		}
 		else {
-			if (options.files) {
+			if (options.raw) {
+				data = options.raw;
+			}
+			else if (options.files) {
 				data = new FormData();
 				
 				for (var key in options.files) {
@@ -105,7 +108,7 @@ import './promise';
 		
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState != 4) return;
-			if (xhr.status == 200 || xhr.status == 201) {
+			if (xhr.status >= 200 && xhr.status <= 299) {
 				var ctype = xhr.getResponseHeader('Content-Type');
 				if (ctype && ctype.indexOf('application/json') !== -1) d.resolve(JSON.parse(xhr.responseText), xhr);
 				else d.resolve(xhr.responseText, xhr);

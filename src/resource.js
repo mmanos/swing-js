@@ -142,6 +142,15 @@ import './ajax';
 			return changed;
 		},
 		
+		$replicate: function() {
+			var data = JSON.parse(JSON.stringify(this.$toJSON()));
+			if (data.id) delete data.id;
+			if (data.created_at) delete data.created_at;
+			if (data.updated_at) delete data.updated_at;
+			if (data.deleted_at) delete data.deleted_at;
+			return new this.constructor(data);
+		},
+		
 		$clone: function() {
 			var copy = new this.constructor;
 			copy.$load(this);
@@ -256,23 +265,41 @@ import './ajax';
 		var d = Swing.promise();
 		var all_models = [];
 		var self = this;
+		var num_requests = 0;
+		var max_requests = options.maxRequests || 50;
+		var last_resp = null;
 		
 		var queryPage = function(page) {
+			num_requests++;
 			options.data.page = page;
 			self.query(options).done(function(models, resp, xhr, opts) {
+				last_resp = resp;
 				var num_models = models.length;
 				while (models.length > 0) {
 					all_models.push(models.shift());
 				}
 				
 				if (num_models == num) {
-					queryPage(page+1);
+					if (num_requests >= max_requests) {
+						xhr.maxRequestsReached = true;
+						d.resolve(all_models, resp, xhr, opts);
+					}
+					else {
+						queryPage(page+1);
+					}
 				}
 				else {
 					d.resolve(all_models, resp, xhr, opts);
 				}
 			}).fail(function(xhr, opts) {
-				d.reject(xhr, opts);
+				// Too many requests response.
+				if (num_requests > 0 && xhr.status == 429) {
+					xhr.tooManyRequests = true;
+					d.resolve(all_models, last_resp, xhr, opts);
+				}
+				else {
+					d.reject(xhr, opts);
+				}
 			});
 		};
 		

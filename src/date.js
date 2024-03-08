@@ -252,6 +252,10 @@ import './core';
 			
 			return true;
 		},
+
+		between: function(start, end) {
+			return this.unix() >= _date(start).unix() && this.unix() <= _date(end).unix();
+		},
 		
 		from: function(date, verbose, postfix, prefix) {
 			var val,
@@ -324,7 +328,7 @@ import './core';
 		},
 		
 		unix: function() {
-			return Math.round(this._d.getTime() / 1000);
+			return Math.floor(this._d.getTime() / 1000);
 		},
 		
 		toISOString : function() {
