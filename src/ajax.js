@@ -8,31 +8,31 @@ import './promise';
 		Swing.ajax.postcheck(options, d);
 		return d;
 	};
-	
+
 	Swing.ajax._makeRequest = function(options) {
 		if (options.response) return options.response;
-		
+
 		var url = options.url;
 		options.type = options.type || 'GET';
 		options.type = options.type.toUpperCase();
 		options.headers = options.headers || {};
 		options.headers['X-Requested-With'] = 'XMLHttpRequest';
-		
+
 		var serialize = function(obj, sep, eq, bo, bc, prefix) {
 			sep = sep || '&';
 			eq = eq || '=';
 			bo = bo || '[';
 			bc = bc || ']';
 			obj = (obj === null) ? {} : obj;
-			
+
 			return Object.keys(obj).map(function(i) {
-				var key = prefix ? 
+				var key = prefix ?
 					prefix + bo + encodeURIComponent(i) + bc :
 					encodeURIComponent(i);
 				var value = obj[i] === null ? '' : obj[i];
-				
+
 				if (value instanceof RegExp) value = value.toString();
-				
+
 				switch (typeof value) {
 					case 'object':
 						if (Object.prototype.toString.call(value) === '[object Array]'
@@ -48,7 +48,7 @@ import './promise';
 				}
 			}).filter(function(i) { return i; }).join(sep);
 		};
-		
+
 		var data = null;
 		if (options.type == 'GET') {
 			if (options.data) {
@@ -62,11 +62,11 @@ import './promise';
 			}
 			else if (options.files) {
 				data = new FormData();
-				
+
 				for (var key in options.files) {
 					data.append(key, options.files[key]);
 				}
-				
+
 				if (options.data) {
 					// PHP/Laravel only supports multipart content type data on POST requests.
 					// The FormData always sends as multipart.
@@ -92,7 +92,7 @@ import './promise';
 				data = serialize(options.data);
 			}
 		}
-		
+
 		var XMLHttpRequest = window.XMLHttpRequest || undefined;
 		if ('undefined' === typeof XMLHttpRequest) {
 			XMLHttpRequest = function() {
@@ -103,9 +103,9 @@ import './promise';
 				throw new Error('This browser does not support XMLHttpRequest.');
 			};
 		}
-		
+
 		var xhr = new XMLHttpRequest(), d = Swing.promise();
-		
+
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState != 4) return;
 			if (xhr.status >= 200 && xhr.status <= 299) {
@@ -115,20 +115,20 @@ import './promise';
 			}
 			else d.reject(xhr);
 		};
-		
+
 		if (options.onprogress) xhr.upload.onprogress = options.onprogress;
-		
+
 		xhr.open(options.type, url, true);
-		
+
 		for (var key in options.headers) {
 			xhr.setRequestHeader(key, options.headers[key]);
 		}
-		
+
 		xhr.send(data);
-		
+
 		return d;
 	};
-	
+
 	Swing.ajax.precheck = function(options) {};
 	Swing.ajax.postcheck = function(options, d) {};
 })(window.Swing || (window.Swing = {}));

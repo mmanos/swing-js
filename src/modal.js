@@ -40,7 +40,7 @@ DOM example:
 
 (function(Swing) {
 	var _instances = {};
-	
+
 	var modal = function(el, options) {
 		if ('undefined' !== typeof jQuery && el instanceof jQuery) {
 			el = input.get(0);
@@ -51,67 +51,67 @@ DOM example:
 		else if ('string' === typeof el) {
 			el = document.querySelector(el);
 		}
-		
+
 		this.el = el;
 		this.options = options || {};
 		this.visible = false;
-		
+
 		Swing.each(this.el.querySelectorAll('[data-dismiss="swing.modal"]'), Swing.bind(function(el) {
 			Swing.on(el, 'click', this.hide, this);
 		}, this));
-		
+
 		if ('swing.modal' == this.el.getAttribute('data-dismiss') && !this.options.disable_backdrop_click) {
 			Swing.on(this.el, 'click', function(e) {
 				if (e.target == e.currentTarget) this.hide();
 			}, this);
 		}
-		
+
 		this.backdrop = document.createElement('div');
 		this.backdrop.className = this.options.backdrop_class || 'modal-backdrop';
-		
+
 		if (!this.options.disable_backdrop_click) {
 			Swing.on(this.backdrop, 'click', this.hide, this);
 		}
 	};
-	
+
 	modal.prototype = {
 		show: function(e) {
 			if (e) e.preventDefault();
 			if (this.visible) return;
-			
+
 			this.visible = true;
-			
+
 			document.body.appendChild(this.backdrop);
 			this.el.style.display = 'block';
-			
+
 			this.trigger('shown');
-			
+
 			return this;
 		},
-		
+
 		hide: function(e) {
 			if (e) e.preventDefault();
 			if (!this.visible) return;
-			
+
 			this.visible = false;
-			
+
 			this.el.style.display = 'none';
 			document.body.removeChild(this.backdrop);
-			
+
 			this.trigger('hidden');
-			
+
 			return this;
 		}
 	};
-	
+
 	Swing.modal = function(el, options, force_new) {
 		if ('undefined' === typeof _instances[el] || force_new) {
 			_instances[el] = new modal(el, options);
 		}
-		
+
 		return _instances[el];
 	};
-	
+
 	if (Swing.observable) Swing.observable(modal);
 	else (Swing.queueObservable || (Swing.queueObservable = [])) && Swing.queueObservable.push(modal);
 })(window.Swing || (window.Swing = {}));
