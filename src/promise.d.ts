@@ -3,7 +3,7 @@ export interface PromiseInterface {
 	reject(...args: any[]): this;
 	then(resolve: Function, reject: Function): this;
 	done(resolve: Function): this;
-	fail(reject: Function): void;
+	fail(reject: Function): this;
 	always(always: Function): this;
 	info(always: Function): {state: string, data: any, callback: []};
 	state(): string;
