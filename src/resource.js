@@ -120,7 +120,12 @@ import './ajax';
 
 			for (var prop in this) {
 				if (this.hasOwnProperty(prop)) {
-					data[prop] = this[prop];
+					if (typeof this[prop] === 'object') {
+						data[prop] = JSON.parse(JSON.stringify(this[prop]));
+					}
+					else {
+						data[prop] = this[prop];
+					}
 				}
 			}
 
