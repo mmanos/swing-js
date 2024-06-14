@@ -1,4 +1,6 @@
-export interface DateInterface {
+export interface CustomDateInterface {}
+
+export interface DateInterface extends CustomDateInterface {
 	(date?: number|string|Date|DateInterface, utc?: boolean): DateInterface;
 	get(unit: string): number|null;
 	set(unit: string, val: number|null): this;
@@ -43,6 +45,6 @@ export interface DateInterface {
 	utc(d: number|string|Date|DateInterface): DateInterface;
 	isInstance(d: number|string|Date|DateInterface): boolean;
 	isDate(d: number|string|Date|DateInterface): boolean;
-};
+}
 
 export default date as DateInterface;
