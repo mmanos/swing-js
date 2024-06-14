@@ -28,6 +28,8 @@ export interface DateInterface extends CustomDateInterface {
 	startOf(unit: string): this;
 	endOf(unit: string): this;
 	diff(from: number|string|Date|DateInterface, unit?: string, precise?: boolean): number;
+	isWeekday(): boolean;
+	isWeekend(): boolean;
 	isSame(d: number|string|Date|DateInterface, unit: string): boolean;
 	between(start: number|string|Date|DateInterface, end: number|string|Date|DateInterface): boolean;
 	from(date: number|string|Date|DateInterface, verbose?: boolean, postfix?: string, prefix?: string): string;

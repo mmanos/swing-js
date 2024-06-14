@@ -237,6 +237,14 @@ import './core';
 			return Math.floor(diff);
 		},
 
+		isWeekday: function() {
+			return this.day() % 6 !== 0;
+		},
+
+		isWeekend: function() {
+			return this.day() % 6 === 0;
+		},
+
 		isSame: function(d, unit) {
 			d = _date(d);
 			unit = normalizeUnits(unit);
