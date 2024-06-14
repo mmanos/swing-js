@@ -1,6 +1,6 @@
 {
   "name": "@mmanos/swing-js",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "A lightweight collection of javascript components to help reduce the need for bloated 3rd-party libraries.",
   "main": "index.js",
   "repository": {
