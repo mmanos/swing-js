@@ -75,6 +75,8 @@ import './core';
 		else this._d = new Date();
 
 		this.utc = utc ? true : false;
+		this._timezone = utc ? 'UTC'
+			: (window.Intl ? Intl.DateTimeFormat().resolvedOptions().timeZone : null);
 	};
 	_date.prototype = {
 		get: function(unit) {
@@ -163,6 +165,15 @@ import './core';
 			this.utc ? this._d.setUTCFullYear(val) : this._d.setFullYear(val); return this;
 		},
 		years: function() {return this.year.apply(this, arguments);},
+
+		timezone: function(val) {
+			if ('undefined' === typeof val) return this._timezone || this.format('Z');
+			var now = new Date();
+			var utcD = _date(new Date(now.toLocaleString('en-US', {timeZone: 'UTC'})));
+			var curDiff = utcD.diff(new Date(now.toLocaleString('en-US', {timeZone: this._timezone})), 'minute', true);
+			var newDiff = utcD.diff(new Date(now.toLocaleString('en-US', {timeZone: val})), 'minute', true);
+			this._timezone = val; this.add(curDiff - newDiff, 'minutes'); return this;
+		},
 
 		add: function(amount, unit) {
 			unit = normalizeUnits(unit);
@@ -360,6 +371,10 @@ import './core';
 
 		clone: function() {
 			return new _date(this.valueOf(), this.utc);
+		},
+
+		toUTC: function() {
+			return this.timezone('UTC');
 		},
 
 		format: function(mask) {

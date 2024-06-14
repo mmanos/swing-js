@@ -22,6 +22,7 @@ export interface DateInterface extends CustomDateInterface {
 	months<T>(val?: T): T extends number ? this : number;
 	year<T>(val?: T): T extends number ? this : number;
 	years<T>(val?: T): T extends number ? this : number;
+	timezone<T>(val?: T): T extends number ? this : number;
 	add(amount: number, unit: string): this;
 	subtract(amount: number, unit: string): this;
 	startOf(unit: string): this;
@@ -41,6 +42,7 @@ export interface DateInterface extends CustomDateInterface {
 	isDST(): boolean;
 	isValid(): boolean;
 	clone(): DateInterface;
+	toUTC(): DateInterface;
 	format(mask?: string): string;
 	utc(d: number|string|Date|DateInterface): DateInterface;
 	isInstance(d: number|string|Date|DateInterface): boolean;
