@@ -22,7 +22,7 @@ export interface DateInterface extends CustomDateInterface {
 	months<T>(val?: T): T extends number ? this : number;
 	year<T>(val?: T): T extends number ? this : number;
 	years<T>(val?: T): T extends number ? this : number;
-	timezone<T>(val?: T): T extends number ? this : number;
+	timezone<T>(val?: T): T extends string ? this : string;
 	add(amount: number, unit: string): this;
 	subtract(amount: number, unit: string): this;
 	startOf(unit: string): this;
