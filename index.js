@@ -2,6 +2,7 @@ export * from "./src/core";
 export * from "./src/promise";
 export * from "./src/ajax";
 export * from "./src/events";
+export * from "./src/collect";
 export * from "./src/collection";
 export * from "./src/resource";
 export * from "./src/date";
