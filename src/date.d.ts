@@ -1,7 +1,7 @@
 export interface CustomDateInterface {}
 
 export interface DateInterface extends CustomDateInterface {
-	(date?: number|string|Date|DateInterface, utc?: boolean): DateInterface;
+	(date?: number|string|Date|DateInterface, utc?: boolean|string, format?: string): DateInterface;
 	get(unit: string): number|null;
 	set(unit: string, val: number|null): this;
 	millisecond<T>(val?: T): T extends number ? this : number;
@@ -46,7 +46,7 @@ export interface DateInterface extends CustomDateInterface {
 	clone(): DateInterface;
 	toUTC(): DateInterface;
 	format(mask?: string): string;
-	utc(d: number|string|Date|DateInterface): DateInterface;
+	utc(d: number|string|Date|DateInterface, format?: string): DateInterface;
 	isInstance(d: number|string|Date|DateInterface): boolean;
 	isDate(d: number|string|Date|DateInterface): boolean;
 }

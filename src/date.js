@@ -63,13 +63,63 @@ import './core';
 			}
 
 			return unit;
+		},
+		createFromFormat = function(date, format) {
+			var monthNames = i18n.monthNames.slice(12);
+			var monthAbbreviations = i18n.monthNames.slice(0, 12);
+			var dayNames = i18n.dayNames.slice(7);
+			var dayAbbreviations = i18n.dayNames.slice(0, 7);
+			var formatParts = format.match(/YYYY|YY|MMMM|MMM|MM|M|DD|Do|D|dddd|ddd|HH|H|hh|h|mm|m|ss|s|A|a/g);
+			const dateParts = date.match(new RegExp([
+				'\\d+(?:st|nd|rd|th)?', 'am', 'pm', 'AM', 'PM',
+				...monthNames, ...monthAbbreviations,
+				...monthNames.map(m => m.toLowerCase()), ...monthAbbreviations.map(m => m.toLowerCase()),
+				...monthNames.map(m => m.toUpperCase()), ...monthAbbreviations.map(m => m.toUpperCase()),
+				...dayNames, ...dayAbbreviations,
+				...dayNames.map(d => d.toLowerCase()), ...dayAbbreviations.map(d => d.toLowerCase()),
+				...dayNames.map(d => d.toUpperCase()), ...dayAbbreviations.map(d => d.toUpperCase())
+			].join('|'), 'g'));
+			var currentDate = new Date();
+			var result = {year:currentDate.getFullYear(), month:currentDate.getMonth(), day:currentDate.getDate(), hours:0, minutes:0, seconds:0, dayOfWeek:null};
+			var isPM = false;
+
+			for (var i = 0; i < formatParts.length; i++) {
+				var part = formatParts[i], value = dateParts[i];
+				switch (part) {
+					case 'YYYY': result.year = parseInt(value, 10); break;
+					case 'YY': result.year = parseInt(value, 10) + 2000; break;
+					case 'MMMM': result.month = monthNames.findIndex(month => month.toLowerCase() === value.toLowerCase()); break;
+					case 'MMM': result.month = monthAbbreviations.findIndex(month => month.toLowerCase() === value.toLowerCase()); break;
+					case 'MM': case 'M': result.month = parseInt(value, 10) - 1; break;
+					case 'DD': case 'D': result.day = parseInt(value, 10); break;
+					case 'Do': result.day = parseInt(value, 10); break;
+					case 'dddd': result.dayOfWeek = dayNames.findIndex(day => day.toLowerCase() === value.toLowerCase()); break;
+					case 'ddd': result.dayOfWeek = dayAbbreviations.findIndex(day => day.toLowerCase() === value.toLowerCase()); break;
+					case 'HH': case 'H': result.hours = parseInt(value, 10); break;
+					case 'hh': case 'h': result.hours = parseInt(value, 10) % 12; break;
+					case 'mm': case 'm': result.minutes = parseInt(value, 10); break;
+					case 'ss': case 's': result.seconds = parseInt(value, 10); break;
+					case 'A': case 'a': isPM = value && value.toLowerCase() === 'pm'; break;
+				}
+			}
+
+			if (isPM && result.hours < 12) result.hours += 12;
+			else if (!isPM && result.hours === 12) result.hours = 0;
+
+			return new Date(result.year, result.month, result.day, result.hours, result.minutes, result.seconds);
 		};
 
-	var _date = Swing.date = function(date, utc) {
-		if (!(this instanceof _date)) return new _date(date, utc);
+	var _date = Swing.date = function(date, utc, format) {
+		if (!(this instanceof _date)) return new _date(date, utc, format);
+
+		if ('string' === typeof utc && !format) {
+			format = utc;
+			utc = undefined;
+		}
 
 		if (date && date % 1 === 0) this._d = date < 2147483640 ? new Date(date*1000) : new Date(date);
-		else if (date && 'string' === typeof date) this._d = new Date(date);
+		else if (date && 'string' === typeof date && format) this._d = createFromFormat(date, format);
+		else if (date && 'string' === typeof date && !format) this._d = new Date(date);
 		else if (date instanceof Date) this._d = date;
 		else if (date instanceof _date) this._d = new Date(date.valueOf(), date.utc);
 		else this._d = new Date();
@@ -436,8 +486,8 @@ import './core';
 		}
 	};
 
-	Swing.date.utc = function(d) {
-		return new _date(d, true);
+	Swing.date.utc = function(d, format) {
+		return new _date(d, true, format);
 	};
 
 	Swing.date.isInstance = function(d) {
