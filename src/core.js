@@ -53,6 +53,18 @@
 		return Object.prototype.toString.call(value) === '[object Array]';
 	};
 
+	Swing.debounce = function(fn, delay, context) {
+		var timer;
+		return function() {
+			context || (context = this);
+			var args = Array.prototype.slice.call(arguments);
+			clearTimeout(timer);
+			timer = setTimeout(function() {
+				fn.apply(context, args);
+			}, delay);
+		};
+	};
+
 	Swing.inherits = function(protoProps, staticProps) {
 		var parent = this, child = function(){return parent.apply(this, arguments);};
 		Swing.extend(child, parent, staticProps);
@@ -78,5 +90,6 @@ export const ready = window.Swing.ready;
 export const extend = window.Swing.extend;
 export const isNumeric = window.Swing.isNumeric;
 export const isArray = window.Swing.isArray;
+export const debounce = window.Swing.debounce;
 export const inherits = window.Swing.inherits;
 export default window.Swing;

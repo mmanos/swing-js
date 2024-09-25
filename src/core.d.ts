@@ -5,4 +5,5 @@ export const ready: (f: Function) => void;
 export const extend: <X, Y>(obj: X, ...args: Y[]) => X & Y;
 export const isNumeric: (value: any) => boolean;
 export const isArray: (value: any) => boolean;
+export const debounce: (fn: Function, delay: number, context?: any) => Function;
 export const inherits: (protoProps: object, staticProps?: object) => object;
