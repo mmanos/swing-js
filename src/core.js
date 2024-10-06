@@ -1,5 +1,6 @@
 (function(Swing) {
 	Swing.each = function(obj, iterator, context) {
+		if (!obj) return obj;
 		var i, length;
 		if (obj.length === +obj.length) {
 			for (i = 0, length = obj.length; i < length; i++) {
